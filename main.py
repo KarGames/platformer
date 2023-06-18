@@ -90,12 +90,13 @@ while running:
         
     screen.fill(SKY_COLOR)
     
-    print(level)
     if level == 0:
         loop()
     elif level == 1:
         if restart:
             player.pos = [5, ground_level]
+            if player.healed:
+                player.healed = False
             enemy = Enemy(health, strength, [500, ground_level], [750, ground_level], CHARACTER_WIDTH, CHARACTER_HEIGHT, [500, ground_level])
             restart = False
             

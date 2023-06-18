@@ -21,3 +21,7 @@ def ceiling_teleporter(screen, pos):
 def door(screen, pos):
     door = pygame.image.load("images/door.png")
     screen.blit(door, pos)
+
+def health(screen, pos):
+    health = pygame.image.load("images/heart.png")
+    screen.blit(health, pos)

@@ -67,12 +67,37 @@ class Teleporter(Interactive_Platform):
         
     def interact(self, player, screen, pos):
         if player.get_rect().colliderect(self.interaction_hitbox):
-            interact_text = font.render("Press E to teleport", True, (255, 255, 255))
+            interact_text = font.render("Press E to Teleport", True, (255, 255, 255))
             screen.blit(interact_text, (screen.get_width()/2-200, 100))
             pressed = pygame.key.get_pressed()
             if pressed[pygame.K_e]:
                 player.pos = pos
             return True
+
+class Health(Interactive_Platform):
+    def __init__(self, platform_pos, screen, ground_level):
+        super().__init__(platform_pos, screen, ground_level)
+        self.can_draw = True
+        
+    def draw(self):
+        if self.can_draw:
+            images.health(self.screen, self.platform_pos)
+        
+    def interact(self, player, screen):
+        if player.get_rect().colliderect(self.interaction_hitbox) and not player.healed:
+            interact_text = font.render("Press E to Heal", True, (255, 255, 255))
+            screen.blit(interact_text, (screen.get_width()/2-200, 100))
+            pressed = pygame.key.get_pressed()
+            if pressed[pygame.K_e]:
+                player.health = 100
+                player.healed = True
+                if player.healed:
+                    self.can_draw = False
+        else:
+            if not player.healed:
+                self.can_draw = True    
+        return True
+    
 
 class Door(Interactive_Platform):
     def draw(self):
@@ -80,7 +105,7 @@ class Door(Interactive_Platform):
         
     def interact(self, player, screen):
         if player.get_rect().colliderect(self.interaction_hitbox):
-            interact_text = font.render("Press E to open door", True, (255, 255, 255))
+            interact_text = font.render("Press E to Open Door", True, (255, 255, 255))
             screen.blit(interact_text, (screen.get_width()/2-200, 100))
             pressed = pygame.key.get_pressed()
             if pressed[pygame.K_e]:
@@ -133,6 +158,13 @@ def init_level_one(screen, ground_level):
     
     door = Door([128, 128], screen, ground_level)
     level_one_interactive_platform_list.append(door)
+    
+    health = Health([1000, ground_level-32], screen, ground_level)
+    level_one_interactive_platform_list.append(health)
+    
+
+level_two_solid_platform_list = []
+level_two_interactive_platform_list = []
 
 def level_one(player, screen):
     for platform in level_one_solid_platform_list:
@@ -154,6 +186,10 @@ def level_one(player, screen):
                 break
             
         if type(platform).__name__ == "Door":
+            if platform.interact(player, screen):
+                break
+            
+        if type(platform).__name__ == "Health":
             if platform.interact(player, screen):
                 break
         
