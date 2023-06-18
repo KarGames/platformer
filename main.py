@@ -2,6 +2,7 @@ import tkinter as tk
 from tkinter import ttk
 
 level = 0
+running = True
 
 class Button():
     def __init__(self, level, root):
@@ -13,6 +14,10 @@ class Button():
         level = self.level
         self.root.destroy()
         
+    def quit_game(self):
+        global running
+        running = False
+        self.root.destroy()
 
 def loop():
     root = tk.Tk()
@@ -25,12 +30,14 @@ def loop():
     button_two = Button(2, root)
     button_three = Button(3, root)
     button_four = Button(4, root)
+    quit_button = Button(None, root)
 
     root.geometry(f"{width}x{height}")
     root.grid_columnconfigure(0, weight=1)
     title = ttk.Frame(root, width=400, height=100)
     title.grid()
     ttk.Label(title, text="Levels", font="Arial 40").grid(column=0, row=0)
+    button = ttk.Button(title, text="QUIT", command=quit_button.quit_game).grid(column=1, row=0)
 
     levels = ttk.Frame(root, width=400, height=400)
     levels.grid()
@@ -59,7 +66,6 @@ clock = pygame.time.Clock()
 FPS = 60
 SKY_COLOR = (135, 206, 235)
 ground_level = screen.get_height()-242
-running = True
 speed = 6
 health = 100
 strength = 5
