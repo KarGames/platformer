@@ -47,8 +47,8 @@ loop()
 import pygame
 import images
 import levels
-import player
-import enemy
+from player import Player
+from enemy import Enemy
 
 pygame.init()
 
@@ -64,14 +64,14 @@ speed = 6
 health = 100
 strength = 5
 start_pos = [5, ground_level]
-
+restart = False
 
 
 #create new player
-player = player.Player(health, strength, start_pos, CHARACTER_WIDTH, CHARACTER_HEIGHT)
+player = Player(health, strength, start_pos, CHARACTER_WIDTH, CHARACTER_HEIGHT)
 
 #create new enemy for testing purposes
-enemy = enemy.Enemy(health, strength, [500, ground_level], [750, ground_level], CHARACTER_WIDTH, CHARACTER_HEIGHT, [500, ground_level])
+enemy = Enemy(health, strength, [500, ground_level], [750, ground_level], CHARACTER_WIDTH, CHARACTER_HEIGHT, [500, ground_level])
 
 #sets all the platforms in level one into a list to loop through and draw everything
 levels.init_level_one(screen, ground_level)
@@ -88,6 +88,11 @@ while running:
     if level == 0:
         loop()
     elif level == 1:
+        if restart:
+            player.pos = [5, ground_level]
+            enemy = Enemy(health, strength, [500, ground_level], [750, ground_level], CHARACTER_WIDTH, CHARACTER_HEIGHT, [500, ground_level])
+            restart = False
+            
         levels.level_one(player, screen)
         
     #handle left and right movement of the player
@@ -114,10 +119,9 @@ while running:
         running = False
     elif player.finish_level:
         print("You Won!")
-        #temporary quit game when won until second level is created
-        player.pos = [5, ground_level]
         level = 0
         player.finish_level = False
+        restart = True
         
     pygame.display.flip()
             

@@ -43,6 +43,9 @@ class Enemy(body.Body):
                 player.pos[1] -= 50
                 self.died = True
                 return
+            elif player.finish_level:
+                self.died = True
+                return
             
             #check if player gets hit 
             if not self.collided and (player.get_rect().colliderect(self.collide_left) or player.get_rect().colliderect(self.collide_right)):
