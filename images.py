@@ -25,3 +25,7 @@ def door(screen, pos):
 def health(screen, pos):
     health = pygame.image.load("images/heart.png")
     screen.blit(health, pos)
+
+def key(screen, pos):
+    key = pygame.image.load("images/key.png")
+    screen.blit(key, pos)

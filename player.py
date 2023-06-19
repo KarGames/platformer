@@ -17,6 +17,7 @@ class Player(body.Body):
         self.is_jump = False
         self.finish_level = False
         self.healed = False
+        self.has_key = False
     
     def draw(self):
         #draw player onto screen

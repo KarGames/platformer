@@ -27,9 +27,6 @@ def loop():
     
     button_one = Button(1, root)
     #following levels not added yet
-    button_two = Button(2, root)
-    button_three = Button(3, root)
-    button_four = Button(4, root)
     quit_button = Button(None, root)
 
     root.geometry(f"{width}x{height}")
@@ -97,6 +94,7 @@ while running:
             player.pos = [5, ground_level]
             if player.healed:
                 player.healed = False
+            player.has_key = False
             enemy = Enemy(health, strength, [500, ground_level], [750, ground_level], CHARACTER_WIDTH, CHARACTER_HEIGHT, [500, ground_level])
             restart = False
             

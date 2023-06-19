@@ -91,13 +91,33 @@ class Health(Interactive_Platform):
             if pressed[pygame.K_e]:
                 player.health = 100
                 player.healed = True
-                if player.healed:
-                    self.can_draw = False
+                self.can_draw = False
         else:
             if not player.healed:
                 self.can_draw = True    
         return True
     
+class Key(Interactive_Platform):
+    def __init__(self, platform_pos, screen, ground_level):
+        super().__init__(platform_pos, screen, ground_level)
+        self.can_draw = True
+        
+    def draw(self):
+        if self.can_draw:
+            images.key(self.screen, self.platform_pos)
+        
+    def interact(self, player, screen):
+        if player.get_rect().colliderect(self.interaction_hitbox) and not player.has_key:
+            interact_text = font.render("Press E to Grab Key", True, (255, 255, 255))
+            screen.blit(interact_text, (screen.get_width()/2-200, 100))
+            pressed = pygame.key.get_pressed()
+            if pressed[pygame.K_e]:
+                player.has_key = True
+                self.can_draw = False
+        else:
+            if not player.has_key:
+                self.can_draw = True   
+        return True
 
 class Door(Interactive_Platform):
     def draw(self):
@@ -105,11 +125,15 @@ class Door(Interactive_Platform):
         
     def interact(self, player, screen):
         if player.get_rect().colliderect(self.interaction_hitbox):
-            interact_text = font.render("Press E to Open Door", True, (255, 255, 255))
+            if player.has_key:
+                interact_text = font.render("Press E to Open Door", True, (255, 255, 255))
+            else:
+                interact_text = font.render("You Need a Key!", True, (255, 255, 255))
             screen.blit(interact_text, (screen.get_width()/2-200, 100))
             pressed = pygame.key.get_pressed()
-            if pressed[pygame.K_e]:
+            if pressed[pygame.K_e] and player.has_key:
                 player.finish_level = True
+        
             return True
     
 #ceiling teleporter where player can teleport to
@@ -159,6 +183,9 @@ def init_level_one(screen, ground_level):
     door = Door([128, 128], screen, ground_level)
     level_one_interactive_platform_list.append(door)
     
+    key = Key([1056, 336], screen, ground_level)
+    level_one_interactive_platform_list.append(key)
+    
     health = Health([1000, ground_level-32], screen, ground_level)
     level_one_interactive_platform_list.append(health)
     
@@ -185,11 +212,8 @@ def level_one(player, screen):
             if platform.interact(player, screen, [135, 64]):
                 break
             
-        if type(platform).__name__ == "Door":
+        if type(platform).__name__ == "Door" or type(platform).__name__ == "Health" or type(platform).__name__ == "Key":
             if platform.interact(player, screen):
-                break
-            
-        if type(platform).__name__ == "Health":
-            if platform.interact(player, screen):
-                break
+                pass
+
         
